@@ -1,0 +1,27 @@
+name: Access Key Vault
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write   # REQUIRED — lets the workflow request the OIDC token
+  contents: read
+
+jobs:
+  get-secret:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login via OIDC
+        uses: azure/login@v2
+        with:
+          client-id:  7d8270fb-d2f6-43ab-a759-b5c5b5c540e7
+          tenant-id: 7d8270fb-d2f6-43ab-a759-b5c5b5c540e7
+          subscription-id: afdb084a-80ec-4dd8-a757-0d7ac193fd78
+
+      - name: Get secret from Key Vault
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az keyvault secret show --name test --vault-name testing --query value -o tsv
